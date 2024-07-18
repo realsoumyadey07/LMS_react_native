@@ -1,12 +1,12 @@
 import React from 'react'
 import WelcomeIntroScreen from '@/screens/welcome/welcome.intro'
 
-const index = () => {
+const WelcomeIntro = () => {
   return (
     <WelcomeIntroScreen/>
   )
 }
 
-export default index
+export default WelcomeIntro
 
 

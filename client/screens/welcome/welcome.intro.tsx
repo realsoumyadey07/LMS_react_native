@@ -18,6 +18,9 @@ const WelcomeIntroScreen = () => {
     Nunito_400Regular,
     Nunito_600SemiBold,
   });
+  if(!fontLoaded && !fontError){
+    return null;
+  }
   const renderItem = ({ item }: { item: onboardingSwiperDataType }) => {
     return (
       <LinearGradient

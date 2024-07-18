@@ -26,18 +26,23 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { responsiveHeight, responsiveWidth } from "react-native-responsive-dimensions";
+import { 
+  responsiveHeight, 
+  responsiveWidth 
+} from "react-native-responsive-dimensions";
 import { router } from "expo-router";
 
 
 interface IFormInputs {
+  name: string;
   email: string;
   password: string;
 }
 
 const schema = yup.object().shape({
-  email: yup.string().email("Please enter a valid email address").required("Email is required"),
-  password: yup.string().min(6, "Password must be at least 6 characters long").required("Password is required"),
+  name: yup.string().max(20, "Username must be less than 20 characters").required("Username is required!"),
+  email: yup.string().email("Please enter a valid email address").required("Email is required!"),
+  password: yup.string().min(6, "Password must be at least 6 characters long").max(12, "Password must be less than 12 characters").required("Password is required!"),
 });
 
 const LoginScreen = () => {
@@ -56,7 +61,7 @@ const LoginScreen = () => {
     resolver: yupResolver(schema)
   });
   const onSubmit = (data: IFormInputs) => {
-
+    router.push("/(routes)/verifyAccount");
   }
   let [fontsLoaded, fontError] = useFonts({
     Raleway_600SemiBold,
@@ -75,16 +80,35 @@ const LoginScreen = () => {
     <LinearGradient colors={["#e5ecf9", "#f6f7f9"]} style={{ flex: 1 }}>
       <ScrollView>
         <Image
-          source={require("@/assets/sign-in/sign_in.png")}
+          source={require("@/assets/sign-in/signup.png")}
           style={styles.signInImage}
         />
         <Text style={[styles.welcomeText, { fontFamily: "Raleway_700Bold" }]}>
-          Welcome Back!
+          Let's get started!
         </Text>
         <Text style={styles.learningText}>
-          Login to your existing account of Becodemy
+          Create an account in Youdemy to get all features
         </Text>
         <View style={styles.inputContainer}>
+          <View>
+            <Controller
+              control={control}
+              name="name"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <>
+                  <TextInput
+                    style={commonStyles.input}
+                    keyboardType="default"
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="Enter your name here"
+                  />
+                  {errors.name && <Text style={{ color: "red", marginLeft: 25 }}>{errors.name.message}</Text>}
+                </>
+              )}
+            />
+          </View>
           <View>
             <Controller
               control={control}
@@ -139,24 +163,20 @@ const LoginScreen = () => {
                 />
               )}
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push("/(routes)/forgot-password")}>
-              <Text style={[styles.forgotSection, { fontFamily: "Nunito_600SemiBold" }]}>
-                Forgot Password?
-              </Text>
-            </TouchableOpacity>
+
           </View>
           <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
             {buttonSpinner ?
               (<ActivityIndicator size="small" color={"white"} />) :
-              (<Text style={{ color: "white", fontWeight: 600 }}>Sign In</Text>)}
+              (<Text style={{ color: "white", fontWeight: 600 }}>Sign Up</Text>)}
           </TouchableOpacity>
           <View style={{ marginTop: -10, flexDirection: "row", alignSelf: "center", gap: 5 }}>
             <Text style={{ textAlign: "center", fontWeight: 600 }}>
-              Don't have an account?
+              Already have an account?
             </Text>
-            <TouchableOpacity onPress={() => router.push("/(routes)/sign-up")}>
+            <TouchableOpacity onPress={() => router.push("/(routes)/login")}>
               <Text style={{ color: "#2467ec", fontWeight: 600 }}>
-                Sign Up
+                Sign In
               </Text>
             </TouchableOpacity>
           </View>
