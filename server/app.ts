@@ -20,14 +20,8 @@ app.use(
   })
 );
 
-
-
-
 //routes
 app.use("/api/v1", userRouter)
-
-
-
 
 
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {

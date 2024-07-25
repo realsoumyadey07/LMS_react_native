@@ -1,4 +1,9 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose, 
+{ 
+  Document, 
+  Model, 
+  Schema 
+} from "mongoose";
 import bcrypt from "bcryptjs";
 require("dotenv").config();
 import jwt from "jsonwebtoken";
@@ -76,12 +81,12 @@ userSchema.pre<IUser>("save", async function (next) {
 
 //sign accessToken
 userSchema.methods.SignAccessToken = async function(){
-  return jwt.sign({id: this._id}, process.env.ACCESS_TOKEN || "");
+  return jwt.sign({id: this._id}, process.env.ACCESS_TOKEN || "", { expiresIn: "5m"});
 }
 
 //sign refreshToken
 userSchema.methods.SignRefreshToken = async function(){
-  return jwt.sign({id: this._is}, process.env.REFRESH_TOKEN || "");
+  return jwt.sign({id: this._id}, process.env.REFRESH_TOKEN || "", {expiresIn: "3d"});
 }
 
 //compare password

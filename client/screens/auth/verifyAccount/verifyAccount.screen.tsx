@@ -71,7 +71,7 @@ const VerifyAccountScreen = () => {
                />
                <TouchableOpacity onPress={() => router.back()}>
                     <Text style={{ fontWeight: 600, marginTop: 7 }}>
-                         Go back to sign in
+                         Go back to? <Text style={{color: "#2467ec"}}>sign in</Text>
                     </Text>
                </TouchableOpacity>
           </View>
