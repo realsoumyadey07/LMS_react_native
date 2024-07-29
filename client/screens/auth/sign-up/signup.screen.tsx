@@ -31,6 +31,10 @@ import {
   responsiveWidth 
 } from "react-native-responsive-dimensions";
 import { router } from "expo-router";
+import axios from "axios";
+import { SERVER_URI } from "@/utils/uri";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Toast } from "react-native-toast-notifications";
 
 
 interface IFormInputs {
@@ -48,20 +52,34 @@ const schema = yup.object().shape({
 const LoginScreen = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [buttonSpinner, setButtonSpinner] = useState(false);
-  // const [userInfo, setUserInfo] = useState({
-  //   email: "",
-  //   password: "",
-  // });
   const [required, setRequired] = useState("");
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors }
   } = useForm<IFormInputs>({
     resolver: yupResolver(schema)
   });
-  const onSubmit = (data: IFormInputs) => {
-    router.push("/(routes)/verifyAccount");
+  const onSubmit = async(data: IFormInputs) => {
+    try {
+      setButtonSpinner(true);
+      const response = await axios.post(`${SERVER_URI}/registration`, data);
+      console.log(response);
+      await AsyncStorage.setItem("activation_token", response.data.activationToken);
+      Toast.show(response.data.message,{
+        type: "success"
+      });
+      reset();
+      setButtonSpinner(false);
+      router.push("/(routes)/verifyAccount");
+    } catch (error: any) {
+      console.log(error);
+      setButtonSpinner(false);
+      Toast.show(error.message, {
+        type: "danger"
+      });
+    }
   }
   let [fontsLoaded, fontError] = useFonts({
     Raleway_600SemiBold,

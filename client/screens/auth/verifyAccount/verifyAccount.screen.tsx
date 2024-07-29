@@ -1,4 +1,5 @@
 import {
+     ActivityIndicator,
      StyleSheet,
      Text,
      TextInput,
@@ -7,17 +8,24 @@ import {
 } from 'react-native'
 import React, { useRef, useState } from 'react'
 import CommonButton from '@/components/CommonButton';
-import { responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
+import {
+     responsiveHeight,
+     responsiveWidth
+} from 'react-native-responsive-dimensions';
 import { router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { SERVER_URI } from '@/utils/uri';
+import { Toast } from 'react-native-toast-notifications';
 
 const VerifyAccountScreen = () => {
      const [code, setCode] = useState(new Array(4).fill(""));
+     const [buttonSpinner, setButtonSpinner] = useState<Boolean>(false);
      const inputs = useRef<any>([...Array(4)].map(() => React.createRef()));
      const handleInput = (text: string, index: number) => {
           const newCode = [...code];
           newCode[index] = text;
           setCode(newCode);
-
           if (text && index < 3) {
                inputs.current[index + 1].current.focus();
           }
@@ -25,8 +33,27 @@ const VerifyAccountScreen = () => {
                inputs.current[index - 1].current.focus();
           }
      }
-     const submitVerify = () => {
-
+     const submitVerify = async () => {
+          setButtonSpinner(true);
+          const otp = code.join("");
+          const activationToken = await AsyncStorage.getItem("activation_token");
+          try {
+               const response = await axios.post(`${SERVER_URI}/activate-user`, {
+                    activation_token: activationToken,
+                    activation_code: otp
+               });
+               Toast.show("User successfully registered", {
+                    type: "success"
+               });
+               setCode(new Array(4).fill(""));
+               setButtonSpinner(false);
+               router.push("/(routes)/login");
+          } catch (error: any) {
+               Toast.show(error.message,{
+                    type: "danger"
+               })
+               setButtonSpinner(false);
+          }
      }
      return (
           <View style={styles.container}>
@@ -53,7 +80,7 @@ const VerifyAccountScreen = () => {
 
                </View>
                <CommonButton
-                    title='Verify'
+                    title={buttonSpinner?<ActivityIndicator size="small" color={"white"} />:'Verify'}
                     customButtonStyles={{
                          backgroundColor: "#2467ec",
                          width: responsiveWidth(82),
@@ -71,7 +98,7 @@ const VerifyAccountScreen = () => {
                />
                <TouchableOpacity onPress={() => router.back()}>
                     <Text style={{ fontWeight: 600, marginTop: 7 }}>
-                         Go back to? <Text style={{color: "#2467ec"}}>sign in</Text>
+                         Go back to? <Text style={{ color: "#2467ec" }}>sign in</Text>
                     </Text>
                </TouchableOpacity>
           </View>

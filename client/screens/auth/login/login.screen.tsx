@@ -28,6 +28,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { responsiveHeight, responsiveWidth } from "react-native-responsive-dimensions";
 import { router } from "expo-router";
+import { Toast } from "react-native-toast-notifications";
+import axios from "axios";
+import { SERVER_URI } from "@/utils/uri";
 
 
 interface IFormInputs {
@@ -43,20 +46,31 @@ const schema = yup.object().shape({
 const LoginScreen = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [buttonSpinner, setButtonSpinner] = useState(false);
-  // const [userInfo, setUserInfo] = useState({
-  //   email: "",
-  //   password: "",
-  // });
   const [required, setRequired] = useState("");
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors }
   } = useForm<IFormInputs>({
     resolver: yupResolver(schema)
   });
-  const onSubmit = (data: IFormInputs) => {
-
+  const onSubmit = async (data: IFormInputs) => {
+    setButtonSpinner(true);
+    try {
+      await axios.post(`${SERVER_URI}/login-user`, data);
+      setButtonSpinner(false);
+      reset();
+      Toast.show("Loggin successfully!", {
+        type: "success"
+      });
+      router.push("/");
+    } catch (error: any) {
+      setButtonSpinner(false);
+      Toast.show("Invalid credentials!", {
+        type: "danger"
+      });
+    }
   }
   let [fontsLoaded, fontError] = useFonts({
     Raleway_600SemiBold,

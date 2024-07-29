@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import { View } from "react-native";
 import { Stack } from "expo-router";
+import { ToastProvider } from "react-native-toast-notifications";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -36,7 +37,7 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   return (
-    <>
+    <ToastProvider>
       {isLoggedIn ? (
         <View></View>
       ) : (
@@ -48,6 +49,6 @@ function RootLayoutNav() {
           <Stack.Screen name="(routes)/forgot-password/index"/>
         </Stack>
       )}
-    </>
+    </ToastProvider>
   );
 }

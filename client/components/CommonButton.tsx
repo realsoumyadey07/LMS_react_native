@@ -3,10 +3,10 @@ import {
      Text, 
      TouchableOpacity 
 } from 'react-native'
-import React from 'react'
+import React, { ReactElement } from 'react'
 
 type buttonProps = {
-     title: string,
+     title: string | ReactElement,
      customButtonStyles: object,
      customTextStyles: object,
      handleSubmit: ()=> void
