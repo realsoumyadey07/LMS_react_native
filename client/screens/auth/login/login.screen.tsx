@@ -66,7 +66,7 @@ const LoginScreen = () => {
       });
       await AsyncStorage.setItem("access_token", response.data.accessToken);
       await AsyncStorage.setItem("refresh_token", response.data.refreshToken);
-      router.push("/(tabs)/home");
+      router.push("/(tabs)");
       reset();
     } catch (error: any) {
       setButtonSpinner(false);

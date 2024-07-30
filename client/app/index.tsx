@@ -5,6 +5,7 @@ import Loader from '@/components/Loader';
 
 export default function TabsIndex() {
   const { loading, user } = useUser();
+  
   return (
     <>
       {
@@ -12,7 +13,7 @@ export default function TabsIndex() {
           <Loader/>
         ) : (
           <Redirect
-            href={!user ? "/(routes)/onboarding" : "/(tabs)/home"}
+            href={!user ? "/(routes)/onboarding" : "/(tabs)"}
           />)
       }
     </>
