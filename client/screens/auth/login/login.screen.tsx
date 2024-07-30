@@ -31,6 +31,7 @@ import { router } from "expo-router";
 import { Toast } from "react-native-toast-notifications";
 import axios from "axios";
 import { SERVER_URI } from "@/utils/uri";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 interface IFormInputs {
@@ -58,13 +59,15 @@ const LoginScreen = () => {
   const onSubmit = async (data: IFormInputs) => {
     setButtonSpinner(true);
     try {
-      await axios.post(`${SERVER_URI}/login-user`, data);
+      const response = await axios.post(`${SERVER_URI}/login-user`, data);
       setButtonSpinner(false);
-      reset();
       Toast.show("Loggin successfully!", {
         type: "success"
       });
-      router.push("/");
+      await AsyncStorage.setItem("access_token", response.data.accessToken);
+      await AsyncStorage.setItem("refresh_token", response.data.refreshToken);
+      router.push("/(tabs)/home");
+      reset();
     } catch (error: any) {
       setButtonSpinner(false);
       Toast.show("Invalid credentials!", {

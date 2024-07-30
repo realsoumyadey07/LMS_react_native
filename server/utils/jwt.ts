@@ -57,5 +57,6 @@ export const sendToken = async (
     success: true,
     user,
     accessToken,
+    refreshToken,
   });
 };
