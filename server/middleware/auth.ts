@@ -9,7 +9,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { redis } from "../utils/redis";
 
 export const isAuthenticated = catchAsyncError(async(req: Request, res: Response, next: NextFunction)=> {
-     const access_token = req.headers['access_token'] as string;
+     const access_token = req.headers['access-token'] as string;
      if(!access_token){
           return next(new ErrorHandler("Please login to access this resourse", 400));
      }

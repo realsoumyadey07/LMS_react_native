@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { ErrorMiddleware } from "./middleware/error";
 import userRouter from "./routes/user.route";
+import courseRouter from "./routes/course.route";
 require("dotenv").config();
 
 app.use(
@@ -21,8 +22,8 @@ app.use(
 );
 
 //routes
-app.use("/api/v1", userRouter)
-
+app.use("/api/v1", userRouter, courseRouter);
+// app.use("api/v1", courseRouter);
 
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({
@@ -31,10 +32,10 @@ app.get("/test", (req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-app.all("*", (req: Request, res: Response, next: NextFunction)=> {
-     const err = new Error(`Route ${req.originalUrl} is not found`) as any;
-     err.statusCode = 404;
-     next(err);
-})
+app.all("*", (req: Request, res: Response, next: NextFunction) => {
+  const err = new Error(`Route ${req.originalUrl} is not found`) as any;
+  err.statusCode = 404;
+  next(err);
+});
 
 app.use(ErrorMiddleware);

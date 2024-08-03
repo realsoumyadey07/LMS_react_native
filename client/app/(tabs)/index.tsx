@@ -1,11 +1,9 @@
-import React from 'react'
-import { Text, View } from 'react-native'
+import HomeScreen from '@/screens/home/home.screen'
+
 
 const index = () => {
   return (
-    <View>
-      <Text>Home</Text>
-    </View>
+    <HomeScreen/>
   )
 }
 

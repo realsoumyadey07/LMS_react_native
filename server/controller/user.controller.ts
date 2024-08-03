@@ -182,7 +182,7 @@ export const logoutUser = catchAsyncError(
 export const updateAccessToken = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const refresh_token = req.headers['refresh_token'] as string;
+      const refresh_token = req.headers['refresh-token'] as string;
       const decoded = jwt.verify(
         refresh_token,
         process.env.REFRESH_TOKEN as string
@@ -231,6 +231,9 @@ export const getUserInfo = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userId = req.user?._id;
+      if(!userId){
+        return next(new ErrorHandler("User Id not found", 404));
+      }
       getUserById(userId as string, res);
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
