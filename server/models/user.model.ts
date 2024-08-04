@@ -1,9 +1,4 @@
-import mongoose, 
-{ 
-  Document, 
-  Model, 
-  Schema 
-} from "mongoose";
+import mongoose, { Document, Model, Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 require("dotenv").config();
 import jwt from "jsonwebtoken";
@@ -22,8 +17,8 @@ export interface IUser extends Document {
   isVerified: boolean;
   courses: Array<{ courseId: string }>;
   comparePassword: (password: string) => Promise<boolean>;
-  SignAccessToken: ()=> string;
-  SignRefreshToken: ()=> string;
+  SignAccessToken: () => string;
+  SignRefreshToken: () => string;
 }
 
 const userSchema: Schema<IUser> = new Schema(
@@ -79,14 +74,18 @@ userSchema.pre<IUser>("save", async function (next) {
 });
 
 //sign accessToken
-userSchema.methods.SignAccessToken = async function(){
-  return jwt.sign({id: this._id}, process.env.ACCESS_TOKEN || "", { expiresIn: "5m"});
-}
+userSchema.methods.SignAccessToken = async function () {
+  return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN || "", {
+    expiresIn: "5m",
+  });
+};
 
 //sign refreshToken
-userSchema.methods.SignRefreshToken = async function(){
-  return jwt.sign({id: this._id}, process.env.REFRESH_TOKEN || "", {expiresIn: "3d"});
-}
+userSchema.methods.SignRefreshToken = async function () {
+  return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN || "", {
+    expiresIn: "3d",
+  });
+};
 
 //compare password
 userSchema.methods.comparePassword = async function (

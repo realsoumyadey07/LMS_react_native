@@ -10,6 +10,8 @@ cloudinary.config({
   api_secret: process.env.CLOUD_SECRET_KEY,
 });
 
+//create server
+
 app.listen(process.env.PORT, () => {
   console.log(`Server is connected with ${process.env.PORT}`);
   connectDb();

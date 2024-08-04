@@ -15,6 +15,7 @@ app.use(
 
 app.use(cookieParser());
 
+//cross origin resource shearing - CORS
 app.use(
   cors({
     origin: process.env.ORIGIN,
