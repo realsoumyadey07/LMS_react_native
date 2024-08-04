@@ -25,11 +25,11 @@ const userSchema: Schema<IUser> = new Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: [true, "Please enter your name!"],
     },
     email: {
       type: String,
-      required: true,
+      required: [true, "Please enter youe email!"],
       unique: true,
       validate: {
         validator: function (value: string) {
@@ -73,6 +73,13 @@ userSchema.pre<IUser>("save", async function (next) {
   next();
 });
 
+//compare password
+userSchema.methods.comparePassword = async function (
+  enteredPassword: string
+): Promise<boolean> {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
 //sign accessToken
 userSchema.methods.SignAccessToken = async function () {
   return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN || "", {
@@ -85,13 +92,6 @@ userSchema.methods.SignRefreshToken = async function () {
   return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN || "", {
     expiresIn: "3d",
   });
-};
-
-//compare password
-userSchema.methods.comparePassword = async function (
-  enteredPassword: string
-): Promise<boolean> {
-  return await bcrypt.compare(enteredPassword, this.password);
 };
 
 export const userModel: Model<IUser> = mongoose.model("User", userSchema);
