@@ -181,7 +181,8 @@ export const logoutUser = catchAsyncError(
 export const updateAccessToken = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const refresh_token = req.headers["refresh-token"] as string;
+      // const refresh_token = req.headers["refresh-token"] as string;
+      const refresh_token = req.cookies.refresh_token;
       const decoded = jwt.verify(
         refresh_token,
         process.env.REFRESH_TOKEN as string
@@ -211,7 +212,6 @@ export const updateAccessToken = catchAsyncError(
       );
 
       req.user = user;
-
       res.cookie("access_token", accessToken, accessTokenOptions);
       res.cookie("refresh_token", refreshToken, refreshTokenOptions);
 
@@ -346,7 +346,7 @@ interface IUpdateProfilePicture {
 export const updateProfilePicture = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { avatar } = req.body;
+      const { avatar } = req.body as IUpdateProfilePicture;
       const userId = req.user?._id;
       const user = await userModel.findById(userId);
       if (avatar && user) {
