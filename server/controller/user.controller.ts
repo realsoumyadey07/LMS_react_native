@@ -181,8 +181,8 @@ export const logoutUser = catchAsyncError(
 export const updateAccessToken = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // const refresh_token = req.headers["refresh-token"] as string;
-      const refresh_token = req.cookies.refresh_token;
+      const refresh_token = req.headers["refresh-token"] as string;
+      // const refresh_token = req.cookies.refresh_token;
       const decoded = jwt.verify(
         refresh_token,
         process.env.REFRESH_TOKEN as string
@@ -278,7 +278,7 @@ export const updateUserInfo = catchAsyncError(
       const userId = req.user?._id;
       const user = await userModel.findById(userId);
       if (email && user) {
-        const isEmailExist = await userModel.findOne({ email });
+        const isEmailExist = await userModel.findOne({ email }); 
         if (isEmailExist) {
           return next(new ErrorHandler("Email already exist", 400));
         }
