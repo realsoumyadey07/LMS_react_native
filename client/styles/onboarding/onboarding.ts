@@ -9,10 +9,10 @@ export const onboardingStyles = StyleSheet.create({
     alignItems: "center",
     marginTop: 50,
   },
-  logo: {
-    width: wp("23%"),
-    height: hp("10%")
-  },
+  // logo: {
+  //   width: wp("20%"),
+  //   height: hp("10%")
+  // },
   titleWrapper: {
     flexDirection: "row"
   },
@@ -33,5 +33,25 @@ export const onboardingStyles = StyleSheet.create({
   titleShape3: {
     position: "absolute",
     left: 60
+  },
+  dscpWrapper: {
+    marginTop: 20
+  },
+  dscpText: {
+    textAlign: "center",
+    color: "#575757",
+    fontSize: hp("2%")
+  },
+  buttonWrapper: {
+    backgroundColor: "#2467ec",
+    width: wp("92%"),
+    paddingVertical: 18,
+    borderRadius: 4,
+    marginTop: 40
+  },
+  buttonText: {
+    color: "white",
+    textAlign: "center",
+    fontWeight: "bold"
   }
 });
