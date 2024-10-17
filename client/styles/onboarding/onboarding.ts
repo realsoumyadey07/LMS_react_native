@@ -66,5 +66,5 @@ export const onboardingStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 5,
-  },
+  }
 });

@@ -43,5 +43,21 @@ export const commonStyles = StyleSheet.create({
           fontSize: hp("2.5%"),
           color: "#575757",
           textAlign: "center"
+     },
+     input: {
+          height: 55,
+          marginHorizontal: 16,
+          borderRadius: 8,
+          paddingLeft: 35,
+          fontSize: 16,
+          backgroundColor: "white",
+          color: "#a1a1a1"
+     },
+     errorContainer: {
+         flexDirection: "row",
+         alignItems: "center",
+         marginHorizontal: 16,
+         position: "absolute",
+         top: 60 
      }
 })
