@@ -1,5 +1,8 @@
+import { LinearGradient } from "expo-linear-gradient";
+import { StatusBar } from "expo-status-bar";
+import { useState } from "react";
 import {
-  ActivityIndicator,
+     ActivityIndicator,
   Image,
   ScrollView,
   StyleSheet,
@@ -9,34 +12,20 @@ import {
   View,
 } from "react-native";
 import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import {
   Entypo,
   Fontisto,
   Ionicons,
   SimpleLineIcons,
 } from "@expo/vector-icons";
-import Feather from '@expo/vector-icons/Feather';
-import { LinearGradient } from "expo-linear-gradient";
-import {
-  useFonts,
-  Raleway_700Bold,
-  Raleway_600SemiBold,
-} from "@expo-google-fonts/raleway";
-import {
-  Nunito_400Regular,
-  Nunito_500Medium,
-  Nunito_700Bold,
-  Nunito_600SemiBold,
-} from "@expo-google-fonts/nunito";
-import { useState } from "react";
-import { StatusBar } from "expo-status-bar";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import Feather from "@expo/vector-icons/Feather";
 import { commonStyles } from "@/styles/common/common.styles";
 import { router } from "expo-router";
 
-export default function LoginScreen() {
+export default function SignupScreen() {
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [buttonSpinner, setButtonSpinner] = useState(false);
   const [userInfo, setUserInfo] = useState({
@@ -45,7 +34,7 @@ export default function LoginScreen() {
   });
   const [required, setRequired] = useState();
   const [error, setError] = useState({
-    password: ""
+    password: "",
   });
   const handlePasswordValidation = (value: string) => {
     const password = value;
@@ -55,40 +44,38 @@ export default function LoginScreen() {
     if (!passwordSpecialCharecter.test(password)) {
       setError({
         ...error,
-        password: "Write atleast one special charecter"
+        password: "Write atleast one special charecter",
       });
       setUserInfo({
         ...userInfo,
-        password: ""
+        password: "",
       });
     } else if (!passwordOneNumber.test(password)) {
       setError({
         ...error,
-        password: "Write at least one number"
+        password: "Write at least one number",
       });
     } else if (!passwordSixValue.test(password)) {
       setError({
         ...error,
-        password: "Write at least 6 characters"
+        password: "Write at least 6 characters",
       });
       setUserInfo({
         ...userInfo,
-        password: ""
+        password: "",
       });
     } else {
       setError({
         ...error,
-        password: ""
+        password: "",
       });
       setUserInfo({
         ...userInfo,
-        password: value
-      })
+        password: value,
+      });
     }
-  }
-  const handleLogin = ()=> {
-
-  }
+  };
+  const handleLogin = () => {};
   return (
     <LinearGradient
       colors={["#e5ecf9", "#f6f7f9"]}
@@ -96,15 +83,15 @@ export default function LoginScreen() {
     >
       <ScrollView>
         <Image
-          source={require("@/assets/sign-in/sign_in.png")}
+          source={require("@/assets/sign-in/signup.png")}
           style={styles.signInImage}
           resizeMode="cover"
         />
         <Text style={[styles.welcomeText, { fontFamily: "Raleway_700Bold" }]}>
-          Welcome Back!
+          Welcome!
         </Text>
         <Text style={styles.learningText}>
-          Login to your account of Youdemy
+          Signup to your account of Youdemy
         </Text>
         <View style={styles.inputContainer}>
           <View>
@@ -148,17 +135,12 @@ export default function LoginScreen() {
             />
             <TouchableOpacity
               style={styles.visibleIcon}
-              onPress={() => setPasswordVisible(!isPasswordVisible)}>
+              onPress={() => setPasswordVisible(!isPasswordVisible)}
+            >
               {isPasswordVisible ? (
-                <Ionicons
-                  name="eye-outline"
-                  size={23}
-                  color={"#747474"} />
+                <Ionicons name="eye-outline" size={23} color={"#747474"} />
               ) : (
-                <Ionicons
-                  name="eye-off-outline"
-                  size={23}
-                  color={"#747474"} />
+                <Ionicons name="eye-off-outline" size={23} color={"#747474"} />
               )}
             </TouchableOpacity>
             {error.password && (
@@ -167,27 +149,25 @@ export default function LoginScreen() {
                 <Text style={styles.errorText}>{error.password}</Text>
               </View>
             )}
-
           </View>
-          <TouchableOpacity onPress={() => router.push("/forgot-password" as any)}>
-            <Text style={[styles.forgotSection, { fontFamily: "Nunito_600SemiBold" }]}>
-              Forgot Password??
-            </Text>
-          </TouchableOpacity>
           <TouchableOpacity
-          style={styles.buttonWrapper}
-          onPress={handleLogin}
+            onPress={() => router.push("/login" as any)}
           >
-            {buttonSpinner? (
-              <ActivityIndicator size={"small"} color={"white"}/>
-            ): (
-              <Text style={styles.buttonText}>Login</Text>
-            )}
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push("/signup" as any)}>
-            <Text style={[styles.forgotSection, { fontFamily: "Nunito_600SemiBold", color: "#4672FF" }]}>
-              Don't have an account??
+            <Text
+              style={[
+                styles.forgotSection,
+                { fontFamily: "Nunito_600SemiBold" },
+              ]}
+            >
+              Already have an account??
             </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonWrapper} onPress={handleLogin}>
+            {buttonSpinner ? (
+              <ActivityIndicator size={"small"} color={"white"} />
+            ) : (
+              <Text style={styles.buttonText}>Signup</Text>
+            )}
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -231,25 +211,25 @@ const styles = StyleSheet.create({
   visibleIcon: {
     position: "absolute",
     top: 15,
-    right: 30
+    right: 30,
   },
   errorText: {
     color: "red",
     fontSize: 11,
-    marginTop: -1
+    marginTop: -1,
   },
   forgotSection: {
     marginHorizontal: 16,
     // textAlign: "center",
     fontSize: 15,
     marginTop: -20,
-    color: "#5e5e5e"
+    color: "#5e5e5e",
   },
   buttonText: {
     color: "white",
     textAlign: "center",
     fontSize: 16,
-    fontFamily: "Nunito_600SemiBold"
+    fontFamily: "Nunito_600SemiBold",
   },
   buttonWrapper: {
     backgroundColor: "#4672FF",
@@ -263,5 +243,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-  }
+    marginBottom: 100,
+  },
 });
