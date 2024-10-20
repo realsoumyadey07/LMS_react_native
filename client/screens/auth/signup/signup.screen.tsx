@@ -100,7 +100,9 @@ export default function SignupScreen() {
       });
     }
   };
-  const handleLogin = () => { };
+  const handleLogin = () => { 
+    router.push("/(routes)/verify-account")
+  };
   return (
     <LinearGradient
       colors={["#e5ecf9", "#f6f7f9"]}
