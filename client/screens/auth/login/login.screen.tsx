@@ -37,6 +37,7 @@ import { commonStyles } from "@/styles/common/common.styles";
 import { router } from "expo-router";
 
 export default function LoginScreen() {
+  
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [buttonSpinner, setButtonSpinner] = useState(false);
   const [userInfo, setUserInfo] = useState({
@@ -47,6 +48,19 @@ export default function LoginScreen() {
   const [error, setError] = useState({
     password: ""
   });
+  const [fontsLoaded, fontError] = useFonts({
+    Raleway_700Bold,
+    Raleway_600SemiBold,
+    Nunito_400Regular,
+    Nunito_500Medium,
+    Nunito_700Bold,
+    Nunito_600SemiBold,
+  });
+
+  
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
   const handlePasswordValidation = (value: string) => {
     const password = value;
     const passwordSpecialCharecter = /(?=.*[!@#$&*])/;
@@ -87,7 +101,6 @@ export default function LoginScreen() {
     }
   }
   const handleLogin = ()=> {
-
   }
   return (
     <LinearGradient
@@ -113,7 +126,7 @@ export default function LoginScreen() {
               keyboardType="email-address"
               style={[styles.input, { paddingLeft: 45 }]}
               value={userInfo.email}
-              onChange={(e) => setUserInfo({ ...userInfo, email: e as any })}
+              onChangeText={(e) => setUserInfo({ ...userInfo, email: e as any })}
               placeholderTextColor="#a1a1a1"
             />
             <Fontisto
@@ -137,7 +150,7 @@ export default function LoginScreen() {
               defaultValue=""
               style={[styles.input, { paddingLeft: 45 }]}
               value={userInfo.password}
-              onChange={(e) => setUserInfo({ ...userInfo, password: e as any })}
+              onChangeText={(e) => setUserInfo({ ...userInfo, password: e as any })}
               placeholderTextColor="#a1a1a1"
             />
             <Feather
@@ -185,7 +198,7 @@ export default function LoginScreen() {
             )}
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push("/signup" as any)}>
-            <Text style={[styles.forgotSection, { fontFamily: "Nunito_600SemiBold", color: "#4672FF" }]}>
+            <Text style={[styles.forgotSection, { fontFamily: "Nunito_600SemiBold", color: "#4672FF", textAlign: "center" }]}>
               Don't have an account??
             </Text>
           </TouchableOpacity>

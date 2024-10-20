@@ -2,7 +2,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import {
-     ActivityIndicator,
+  ActivityIndicator,
   Image,
   ScrollView,
   StyleSheet,
@@ -21,14 +21,27 @@ import {
   Ionicons,
   SimpleLineIcons,
 } from "@expo/vector-icons";
+import {
+  useFonts,
+  Raleway_700Bold,
+  Raleway_600SemiBold,
+} from "@expo-google-fonts/raleway";
+import {
+  Nunito_400Regular,
+  Nunito_500Medium,
+  Nunito_700Bold,
+  Nunito_600SemiBold,
+} from "@expo-google-fonts/nunito";
 import Feather from "@expo/vector-icons/Feather";
 import { commonStyles } from "@/styles/common/common.styles";
 import { router } from "expo-router";
 
 export default function SignupScreen() {
+  
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [buttonSpinner, setButtonSpinner] = useState(false);
   const [userInfo, setUserInfo] = useState({
+    name: "",
     email: "",
     password: "",
   });
@@ -36,6 +49,18 @@ export default function SignupScreen() {
   const [error, setError] = useState({
     password: "",
   });
+  const [fontsLoaded, fontError] = useFonts({
+    Raleway_700Bold,
+    Raleway_600SemiBold,
+    Nunito_400Regular,
+    Nunito_500Medium,
+    Nunito_700Bold,
+    Nunito_600SemiBold,
+  });
+
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
   const handlePasswordValidation = (value: string) => {
     const password = value;
     const passwordSpecialCharecter = /(?=.*[!@#$&*])/;
@@ -75,7 +100,7 @@ export default function SignupScreen() {
       });
     }
   };
-  const handleLogin = () => {};
+  const handleLogin = () => { };
   return (
     <LinearGradient
       colors={["#e5ecf9", "#f6f7f9"]}
@@ -96,11 +121,33 @@ export default function SignupScreen() {
         <View style={styles.inputContainer}>
           <View>
             <TextInput
+              placeholder="Enter your name here"
+              keyboardType="default"
+              style={[styles.input, { paddingLeft: 45 }]}
+              value={userInfo.name}
+              onChangeText={(e) => setUserInfo({ ...userInfo, name: e as any })}
+              placeholderTextColor="#a1a1a1"
+            />
+            <Feather
+              style={{ position: "absolute", left: 30, top: 17.8 }}
+              name="user"
+              size={20}
+              color="#a1a1a1"
+            />
+            {required && (
+              <View style={commonStyles.errorContainer}>
+                <Entypo name="cross" size={18} color="red" />
+                <Text style={styles.errorText}></Text>
+              </View>
+            )}
+          </View>
+          <View>
+            <TextInput
               placeholder="Enter your email here"
               keyboardType="email-address"
               style={[styles.input, { paddingLeft: 45 }]}
               value={userInfo.email}
-              onChange={(e) => setUserInfo({ ...userInfo, email: e as any })}
+              onChangeText={(e) => setUserInfo({ ...userInfo, email: e as any })}
               placeholderTextColor="#a1a1a1"
             />
             <Fontisto
@@ -124,7 +171,7 @@ export default function SignupScreen() {
               defaultValue=""
               style={[styles.input, { paddingLeft: 45 }]}
               value={userInfo.password}
-              onChange={(e) => setUserInfo({ ...userInfo, password: e as any })}
+              onChangeText={(e) => setUserInfo({ ...userInfo, password: e as any })}
               placeholderTextColor="#a1a1a1"
             />
             <Feather

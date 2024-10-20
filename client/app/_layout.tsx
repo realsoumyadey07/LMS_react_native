@@ -36,6 +36,8 @@ export default function RootLayout() {
             <Stack.Screen name='(routes)/onboarding/index'/>
             <Stack.Screen name='(routes)/welcome-intro/index'/>
             <Stack.Screen name='(routes)/login/index'/>
+            <Stack.Screen name='(routes)/signup/index'/>
+            <Stack.Screen name='(routes)/forgot-password/index'/>
           </Stack>
         )
       }
