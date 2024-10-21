@@ -1,4 +1,5 @@
 import Button from "@/components/button/button";
+import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useRef, useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -17,7 +18,7 @@ export default function VerifyAccountScreen() {
                inputs.current[index - 1].current.focus();
           }
      }
-     const handleVerify = ()=> {
+     const handleVerify = () => {
 
      }
      return (
@@ -34,12 +35,19 @@ export default function VerifyAccountScreen() {
                               onChangeText={(text) => handleInput(text, index)}
                               value={code[index]}
                               ref={inputs.current[index] as any}
-                              returnKeyType="done"
+                              // returnKeyType="done"
                               autoFocus={index === 0}
                          />
                     ))}
                </View>
-               <Button title="Verify" onPress={handleVerify}/>
+               <View style={{width: "100%", marginTop: 10}}>
+                    <Button title="Verify" onPress={handleVerify} />
+               </View>
+               <TouchableOpacity
+                    onPress={()=> router.push("/login")}
+               >
+                    <Text style={{fontSize: 15, marginTop: 20, fontWeight: "700"}}>Go back to login</Text>
+               </TouchableOpacity>
                <StatusBar style="dark" />
           </View>
      )
@@ -76,5 +84,5 @@ const styles = StyleSheet.create({
           textAlign: "center",
           marginRight: 10
      },
-     
+
 })
