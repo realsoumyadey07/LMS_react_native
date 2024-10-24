@@ -4,6 +4,9 @@ import { CtachAsyncError } from "../middlewares/catchAsyncError";
 import ErrorHandler from "../utils/errorHandler";
 import { userModel } from "../models/user.model";
 import jwt, { Secret } from "jsonwebtoken";
+import ejs from "ejs";
+import path from "path";
+import { sendMail } from "../utils/sendMail";
 
 interface IRegistrationBody {
   name: string;
@@ -26,7 +29,29 @@ export const registerUser = CtachAsyncError(
         password,
       };
       const activationToken = createActivationToken(user);
-      
+      const activationCode = activationToken.activationCode;
+      const data = {
+        user: {
+          name: user.name
+        },
+        activationCode
+      }
+      const html = await ejs.renderFile(path.join(__dirname, "../mails/activation.mail.ejs"), data);
+      try {
+        await sendMail({
+          email: user.email,
+          subject: "Activate your account",
+          template: "activation.mail.ejs",
+          data,
+        });
+        res.status(200).json({
+          success: true,
+          message: `Please check your email: ${user.email} to activate your account`,
+          activationToken: activationToken.token
+        });
+      } catch (error: any) {
+        return new ErrorHandler(error.message, 400);
+      }
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
