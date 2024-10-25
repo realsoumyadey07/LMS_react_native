@@ -2,7 +2,7 @@ require("dotenv").config();
 import { NextFunction, Request, Response } from "express";
 import { CtachAsyncError } from "../middlewares/catchAsyncError";
 import ErrorHandler from "../utils/errorHandler";
-import { userModel } from "../models/user.model";
+import { IUser, userModel } from "../models/user.model";
 import jwt, { Secret } from "jsonwebtoken";
 import ejs from "ejs";
 import path from "path";
@@ -32,11 +32,14 @@ export const registerUser = CtachAsyncError(
       const activationCode = activationToken.activationCode;
       const data = {
         user: {
-          name: user.name
+          name: user.name,
         },
-        activationCode
-      }
-      const html = await ejs.renderFile(path.join(__dirname, "../mails/activation.mail.ejs"), data);
+        activationCode,
+      };
+      const html = await ejs.renderFile(
+        path.join(__dirname, "../mails/activation.mail.ejs"),
+        data
+      );
       try {
         await sendMail({
           email: user.email,
@@ -47,7 +50,7 @@ export const registerUser = CtachAsyncError(
         res.status(200).json({
           success: true,
           message: `Please check your email: ${user.email} to activate your account`,
-          activationToken: activationToken.token
+          activationToken: activationToken.token,
         });
       } catch (error: any) {
         return new ErrorHandler(error.message, 400);
@@ -64,7 +67,7 @@ interface IActivationToken {
 }
 
 const createActivationToken = (user: IRegistrationBody): IActivationToken => {
-  const activationCode = Math.floor(1000 * Math.random() * 9000).toString();
+  const activationCode = Math.floor(1000 + Math.random() * 9000).toString();
   const token = jwt.sign(
     {
       user,
@@ -80,3 +83,69 @@ const createActivationToken = (user: IRegistrationBody): IActivationToken => {
     activationCode,
   };
 };
+
+interface IActivationRequest {
+  activation_token: string;
+  activation_code: string;
+}
+
+export const activateUser = CtachAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { activation_token, activation_code } =
+        req.body as IActivationRequest;
+      const newUser: { user: IUser; activationCode: string } = jwt.verify(
+        activation_token,
+        process.env.ACTIVATION_SECRET as Secret
+      ) as { user: IUser; activationCode: string };
+      if (!newUser || activation_code !== newUser.activationCode) {
+        return next(new ErrorHandler("Invalid activation code", 400));
+      }
+      const {name, email, password} = newUser.user;
+      const userExist = await userModel.findOne({email});
+      if(userExist){
+        return next(new ErrorHandler("User already exist", 400));
+      }
+      const user = await userModel.create({
+        name,
+        email,
+        password
+      });
+      res.status(200).json({
+        success: true,
+        user,
+        message: "User successfully created!"
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+//user login
+
+interface ILoginRequest {
+  email: string;
+  password: string;
+}
+
+export const loginUser = CtachAsyncError(async(req: Request, res: Response, next: NextFunction)=> {
+  try {
+    const {email, password} = req.body as ILoginRequest;
+    if(!email || !password){
+      return next(new ErrorHandler("Please enter the email and the password properly", 400));
+    }
+    const user = await userModel.findOne({email}).select("+password");
+    if(!user){
+      return next(new ErrorHandler("Invalid email or password!", 400));
+    }
+    const isMatch = await user.comparePassword(password);
+    if(!isMatch){
+      return next(new ErrorHandler("Password is not correct!", 400));
+    }
+    
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 400));
+  }
+})
+
