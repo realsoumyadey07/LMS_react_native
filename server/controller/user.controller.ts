@@ -8,6 +8,7 @@ import ejs from "ejs";
 import path from "path";
 import { sendMail } from "../utils/sendMail";
 import { sendToken } from "../utils/jwt";
+import { redis } from "../utils/redis";
 
 interface IRegistrationBody {
   name: string;
@@ -102,20 +103,20 @@ export const activateUser = CtachAsyncError(
       if (!newUser || activation_code !== newUser.activationCode) {
         return next(new ErrorHandler("Invalid activation code", 400));
       }
-      const {name, email, password} = newUser.user;
-      const userExist = await userModel.findOne({email});
-      if(userExist){
+      const { name, email, password } = newUser.user;
+      const userExist = await userModel.findOne({ email });
+      if (userExist) {
         return next(new ErrorHandler("User already exist", 400));
       }
       const user = await userModel.create({
         name,
         email,
-        password
+        password,
       });
       res.status(200).json({
         success: true,
         user,
-        message: "User successfully created!"
+        message: "User successfully created!",
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
@@ -130,23 +131,48 @@ interface ILoginRequest {
   password: string;
 }
 
-export const loginUser = CtachAsyncError(async(req: Request, res: Response, next: NextFunction)=> {
-  try {
-    const {email, password} = req.body as ILoginRequest;
-    if(!email || !password){
-      return next(new ErrorHandler("Please enter the email and the password properly", 400));
+export const loginUser = CtachAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, password } = req.body as ILoginRequest;
+      if (!email || !password) {
+        return next(
+          new ErrorHandler(
+            "Please enter the email and the password properly",
+            400
+          )
+        );
+      }
+      const user = await userModel.findOne({ email }).select("+password");
+      if (!user) {
+        return next(new ErrorHandler("Invalid email or password!", 400));
+      }
+      const isMatch = await user.comparePassword(password);
+      if (!isMatch) {
+        return next(new ErrorHandler("Password is not correct!", 400));
+      }
+      sendToken(user, 200, res);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
     }
-    const user = await userModel.findOne({email}).select("+password");
-    if(!user){
-      return next(new ErrorHandler("Invalid email or password!", 400));
-    }
-    const isMatch = await user.comparePassword(password);
-    if(!isMatch){
-      return next(new ErrorHandler("Password is not correct!", 400));
-    }
-    sendToken(user, 200, res);
-  } catch (error: any) {
-    return next(new ErrorHandler(error.message, 400));
   }
-})
+);
+
+//logout user
+
+export const logoutUser = CtachAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      res.cookie("access_token", "", {maxAge: 1});
+      res.cookie("refresh_token", "", {maxAge: 1});
+      redis.del(req.user?.id);
+      res.status(200).json({
+        success: true,
+        message: "User loged out successfully"
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
 
