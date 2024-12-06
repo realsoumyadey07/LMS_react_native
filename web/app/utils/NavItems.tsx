@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 export const navItemData = [
@@ -30,7 +31,19 @@ type Props = {
 
 const NavItems: React.FC<Props> = ({activeItem, isMobile}) => {
   return (
-    <></>
+    <>
+      <div className="hidden 800px:flex">
+        {
+          navItemData && navItemData.map((item, index)=> (
+            <Link key={index} href={`${item.url}`}>
+              <span className={activeItem===index? "dark:text-[#37a39a] text-[crimson]" : "dark:text-white text-black"}>
+              {item.name}
+              </span>
+            </Link>
+          ))
+        }
+      </div>
+    </>
   )
 };
 
